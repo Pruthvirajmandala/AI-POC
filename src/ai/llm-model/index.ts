@@ -93,14 +93,21 @@ export const model = {
       const prompt = generatePrompt(input, searchResults);
       console.log('model.invoke: Generated prompt:', prompt);
 
-      // Get response from Ollama
-      const ollamaResponse = await llm.invoke([new HumanMessage(prompt)]);
-      console.log('model.invoke: Received Ollama response:', ollamaResponse);
-
-      // Convert complex content to string if needed
-      const content = typeof ollamaResponse.content === 'string' 
-        ? ollamaResponse.content 
-        : JSON.stringify(ollamaResponse.content);
+      let content: string;
+      try {
+        // Try to get response from Ollama
+        const ollamaResponse = await llm.invoke([new HumanMessage(prompt)]);
+        console.log('model.invoke: Received Ollama response:', ollamaResponse);
+        content = typeof ollamaResponse.content === 'string' 
+          ? ollamaResponse.content 
+          : JSON.stringify(ollamaResponse.content);
+      } catch (error) {
+        console.log('model.invoke: Ollama unavailable, using search results directly:', error);
+        // If Ollama fails, format all search results into a readable response
+        content = searchResults.map((result, index) => 
+          `Result ${index + 1}:\n${result.snippet}`
+        ).join('\n\n');
+      }
 
       // Format the response with metadata
       const response: ModelResponse = {
