@@ -14,7 +14,7 @@ class RunnableError extends Error {
   }
 }
 
-export async function startRunnable(message: string, chatId: string): Promise<ModelResponse> {
+export async function startRunnable(message: string): Promise<ModelResponse> {
   console.log('startRunnable: Starting with message:', message);
   
   if (!message.trim()) {

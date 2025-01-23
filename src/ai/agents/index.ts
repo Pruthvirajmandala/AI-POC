@@ -1,4 +1,4 @@
-import { BaseMessage, HumanMessage } from "@langchain/core/messages";
+import { BaseMessage } from "@langchain/core/messages";
 import { model } from "../llm-model";
 
 export class Agent {

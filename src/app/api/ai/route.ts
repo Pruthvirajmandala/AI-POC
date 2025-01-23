@@ -1,13 +1,9 @@
 import { startRunnable } from "@/ai";
-import { nanoid } from "nanoid";
 import { z } from "zod";
 
 const InputBodySchema = z.object({
-  message: z.string().min(1),
-  chatId: z.string().optional(),
+  message: z.string().min(1)
 });
-
-type InputBodyType = z.infer<typeof InputBodySchema>;
 
 interface ErrorResponse {
   error: {
@@ -24,7 +20,6 @@ interface SuccessResponse {
     metadata: {
       resultCount: number;
     };
-    chatId: string;
   };
 }
 
@@ -47,9 +42,9 @@ export const POST = async (req: Request): Promise<Response> => {
       return Response.json(errorResponse, { status: 400 });
     }
 
-    const { message, chatId = nanoid() } = result.data;
+    const { message } = result.data;
     console.log('API route: Calling startRunnable with message:', message);
-    const response = await startRunnable(message, chatId);
+    const response = await startRunnable(message);
     console.log('API route: Received response from startRunnable:', response);
 
     if (!response || typeof response.content !== 'string') {
@@ -71,8 +66,7 @@ export const POST = async (req: Request): Promise<Response> => {
       data: {
         content: response.content,
         summary: summary.length > 150 ? summary.substring(0, 147) + '...' : summary,
-        metadata: response.metadata,
-        chatId,
+        metadata: response.metadata
       }
     };
     console.log('API route: Sending success response:', successResponse);

@@ -1,5 +1,4 @@
 import { searchTool } from "../tools/searchTool";
-import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
 import { llm } from "./ollama";
 import { HumanMessage } from "@langchain/core/messages";
 

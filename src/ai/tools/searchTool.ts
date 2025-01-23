@@ -1,5 +1,4 @@
 import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
-import { Tool } from "@langchain/core/tools";
 
 interface TavilyResult {
   title: string;
