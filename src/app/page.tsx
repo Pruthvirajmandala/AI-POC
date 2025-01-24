@@ -105,15 +105,8 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="h-8 w-32 relative">
-                <Image
-                  src="/next.svg"
-                  alt="Logo"
-                  fill
-                  className="dark:invert object-contain"
-                  priority
-                />
               </div>
-              <h1 className="ml-4 text-2xl font-bold text-gray-900">AI Assistant</h1>
+              <h1 className="ml-4 text-2xl font-bold text-gray-900">AI Agent</h1>
             </div>
           </div>
         </div>
