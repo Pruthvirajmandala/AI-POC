@@ -1,5 +1,3 @@
-import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
-
 interface TavilyResult {
   title: string;
   url: string;
@@ -22,10 +20,48 @@ if (!process.env.TAVILY_API_KEY) {
   throw new Error('TAVILY_API_KEY is required but not set in environment variables');
 }
 
-export const searchTool = new TavilySearchResults({
-  apiKey: process.env.TAVILY_API_KEY,
-  maxResults: 1,
-});
+const runSearch = async (input: string): Promise<SearchResult[]> => {
+  const response = await fetch("https://api.tavily.com/search", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      api_key: process.env.TAVILY_API_KEY,
+      query: input,
+      max_results: 1
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Tavily request failed with status ${response.status}`);
+  }
+
+  const resultsData = await response.json();
+  const searchResults = Array.isArray(resultsData) ? resultsData :
+    resultsData?.results || resultsData?.data?.results || [];
+
+  if (!searchResults.length) {
+    return [{
+      title: "No results found",
+      snippet: "No matching results were found for your query.",
+      url: "",
+      score: 0
+    }];
+  }
+
+  return searchResults.map((result: TavilyResult) => ({
+    title: result.title || "Untitled",
+    snippet: result.content || result.raw_content || "No content available",
+    url: result.url || "",
+    score: result.score || 0
+  }));
+};
+
+export const searchTool = {
+  invoke: runSearch,
+  call: runSearch
+};
 
 // Verify the API key is working
 (async () => {
