@@ -34,12 +34,14 @@ const runSearch = async (input: string): Promise<SearchResult[]> => {
   });
 
   if (!response.ok) {
-    throw new Error(`Tavily request failed with status ${response.status}`);
+    const errorBody = await response.text().catch(() => "");
+    throw new Error(
+      `Tavily request failed: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`
+    );
   }
 
   const resultsData = await response.json();
-  const searchResults = Array.isArray(resultsData) ? resultsData :
-    resultsData?.results || resultsData?.data?.results || [];
+  const searchResults = resultsData?.results || [];
 
   if (!searchResults.length) {
     return [{
@@ -59,15 +61,14 @@ const runSearch = async (input: string): Promise<SearchResult[]> => {
 };
 
 export const searchTool = {
-  invoke: runSearch,
-  call: runSearch
+  invoke: runSearch
 };
 
 // Verify the API key is working
 (async () => {
   try {
     console.log('Testing Tavily search connection...');
-    await searchTool.call("test");
+    await searchTool.invoke("test");
     console.log('Successfully connected to Tavily search');
   } catch (error) {
     console.error('Failed to initialize Tavily search:', error);
