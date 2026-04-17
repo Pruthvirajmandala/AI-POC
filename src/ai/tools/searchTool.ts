@@ -17,7 +17,7 @@ console.log('Initializing search tool with API key:', process.env.TAVILY_API_KEY
 
 if (!process.env.TAVILY_API_KEY) {
   console.error('TAVILY_API_KEY is not set in environment variables');
-  throw new Error('TAVILY_API_KEY is required but not set in environment variables');
+  throw new Error('TAVILY_API_KEY is required but not set in environment variables. Add TAVILY_API_KEY to your environment variables or .env file.');
 }
 
 const runSearch = async (input: string): Promise<SearchResult[]> => {
